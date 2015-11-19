@@ -15,7 +15,7 @@ Install it from GitHub with ``pip``, you must use **root permission**: ::
 
 Run it, **root permission** is also required, no optional arguments: ::
 
-    sudo dping github.com
+    sudo dping example-site.com
 
 That's it. You can learn more from the source code.
 
