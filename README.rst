@@ -1,5 +1,5 @@
-A simple ping program write in Python.
-==================================
+A simple ping program written in Python.
+====================================
 
 .. image:: https://github.com/Damnever/dping/blob/master/view.png
     :target: https://raw.githubusercontent.com/Damnever/pigar/master/view.png
