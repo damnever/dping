@@ -26,6 +26,8 @@ The reason to write the C extension is I want to block ``SIGINT`` when a ping re
 
 You can consider the situation like this: it sends a ICMP packet to destination, and it increases transmitted counter value, it waiting for receiving a ICMP response packet, then it increases received counter value. If it sends a packet then you enter ``Ctrl+C``, then the program will be interrupted, it will loss the ICMP response packet and received counter value, so the loss rate is not exactly incorrect.
 
+Why don't I just throw it away? Because I do not wanna do this.
+
 The C extension is usefull. For example:
 
 .. code:: python
