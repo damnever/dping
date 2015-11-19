@@ -39,11 +39,11 @@ The C extension is usefull. For example:
     def main():
         try:
             with sigpending(signal.SIGINT):
-                print('\nDoing sth.')
+                print('Doing sth.')
                 for i in range(1, 6):
                     time.sleep(1)
                     print('{0} sec passed!'.format(i))
-                print('\nDone.')
+                print('Done.')
         except KeyboardInterrupt:
             print('\nInterruped')
 
