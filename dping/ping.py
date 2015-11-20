@@ -55,7 +55,8 @@ class Ping(object):
                              self._pid)
 
     def start(self, timeout=3):
-        size = self._buffer_size
+        # ICMP packet + IP header
+        size = self._buffer_size + 20
         addr = socket.gethostbyname(self._addr)
         print('PING {0} ({1}) {2} bytes of data.'.format(self._addr, addr, size))
 
