@@ -60,7 +60,7 @@ class Ping(object):
         addr = socket.gethostbyname(self._addr)
         print('PING {0} ({1}) {2} bytes of data.'.format(self._addr, addr, size))
 
-        while self._icmp_seq <= self._max_icmp_seq:
+        while self._icmp_seq < self._max_icmp_seq:
             try:
                 with sigpending(signal.SIGINT):
                     self.ping_pong(addr, timeout)
