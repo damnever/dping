@@ -25,15 +25,15 @@ class Ping(object):
 
     _ICMP_ECHO_REQUEST = 8
     _verbose_fmt = '{0} bytes from {1}: icmp_seq={2} ttl={3} time={4:.0f}ms'
-    # "BBHBHd"
+    # "BBHHHd"
     _stp = struct.Struct('B')  # type(8bit)
     _scd = struct.Struct('B')  # code(8bit)
     _scs = struct.Struct('H')  # check sum(16bit)
-    _sis = struct.Struct('B')  # icmp seq(8bit)
     _spid = struct.Struct('H')  # pid(cat /proc/sys/kernel/pid_max: 16bit)
+    _sis = struct.Struct('H')  # icmp seq(16bit)
     _sts = struct.Struct('d')  # time stamp(...64bit)
-    _buffer_size = (_stp.size + _scd.size + _scs.size + _sis.size +
-                    _spid.size + _sts.size)
+    _buffer_size = (_stp.size + _scd.size + _scs.size + _spid.size +
+                    _sis.size + _sts.size)
     _sttl = struct.Struct('B')  # ttl(8bit)
 
     def __init__(self, addr):
@@ -42,7 +42,7 @@ class Ping(object):
                                      socket.IPPROTO_ICMP)
         self._pid = os.getpid()
         self._addr = addr
-        self._max_icmp_seq = 255
+        self._max_icmp_seq = (1 << 16) - 1
         self._icmp_seq = self._received = 0
         self._start = self._end = 0
 
@@ -51,8 +51,7 @@ class Ping(object):
         self._scd.pack_into(self._buffer, self._stp.size, 0)
         self._spid.pack_into(self._buffer,
                              self._stp.size + self._scd.size +
-                             self._scs.size + self._sis.size,
-                             self._pid)
+                             self._scs.size, self._pid)
 
     def start(self, timeout=3):
         # ICMP packet + IP header
@@ -100,7 +99,8 @@ class Ping(object):
         self._scs.pack_into(self._buffer, self._stp.size + self._scd.size,
                             check_sum)
         self._sis.pack_into(self._buffer,
-                            self._stp.size + self._scd.size + self._scs.size,
+                            self._stp.size + self._scd.size +
+                            self._scs.size + self._spid.size,
                             icmp_seq)
         self._sts.pack_into(self._buffer, self._buffer_size - self._sts.size,
                             time_stamp)
@@ -112,10 +112,11 @@ class Ping(object):
         # IP Header: 20 bytes
         type_ = self._stp.unpack_from(buffer, ip_len)
         icmp_seq = self._sis.unpack_from(
-            buffer, ip_len + self._stp.size + self._scd.size + self._scs.size)
+            buffer, ip_len + self._stp.size + self._scd.size +
+            self._scs.size + self._spid.size)
         pid = self._spid.unpack_from(
             buffer, ip_len + self._stp.size + self._scd.size +
-            self._scs.size + self._sis.size)
+            self._scs.size)
         time_stamp = self._sts.unpack_from(
             buffer, ip_len + self._buffer_size - self._sts.size)
         return ttl[0], type_[0], icmp_seq[0], pid[0], time_stamp[0]
