@@ -63,8 +63,3 @@ Ouput(``^C`` is ``Ctrl+C``): ::
     Done.
 
     Interruped
-
-LICENSE
-------
-
-`The BSD 3-Clause License <https://github.com/Damnever/dping/blob/master/LICENSE>`_
